@@ -1,0 +1,5 @@
+require('plugins.ui.telescope')
+require('plugins.ui.which-key')
+require('plugins.ui.neo-tree')
+require('plugins.ui.mini-icons')
+require('plugins.ui.yazi')

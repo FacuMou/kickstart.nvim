@@ -1,5 +1,1 @@
-return {
-  'relf108/nvim-unstack',
-  event = 'VeryLazy',
-  version = '*',
-}
+-- nvim-unstack is installed but no configuration needed

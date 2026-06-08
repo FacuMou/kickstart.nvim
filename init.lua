@@ -1,99 +1,143 @@
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-vim.g.have_nerd_font = true
-vim.o.number = true
-vim.o.relativenumber = true
-vim.opt.modeline = false
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- ============================================================
+-- SECTION 1: FOUNDATION
+-- Core Neovim settings, leaders, options, basic keymaps, basic autocmds
+-- ============================================================
+do
+  vim.g.mapleader = ' '
+  vim.g.maplocalleader = ' '
+  vim.g.have_nerd_font = true
 
--- Enable mouse mode, can be useful for resizing splits for example!
-vim.o.mouse = 'a'
--- Don't show the mode, since it's already in the status line
-vim.o.showmode = false
+  vim.o.number = true
+  vim.o.relativenumber = true
+  vim.opt.modeline = false
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
 
--- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
-vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
-end)
+  vim.o.mouse = 'a'
+  vim.o.showmode = false
 
-vim.o.breakindent = true
-vim.o.undofile = true
+  vim.schedule(function()
+    vim.o.clipboard = 'unnamedplus'
+  end)
 
--- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.o.ignorecase = true
-vim.o.smartcase = true
+  vim.o.breakindent = true
+  vim.o.undofile = true
 
--- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
--- Decrease update time
-vim.o.updatetime = 250
--- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
--- Configure how new splits should be opened
-vim.o.splitright = true
-vim.o.splitbelow = true
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+  vim.o.ignorecase = true
+  vim.o.smartcase = true
 
--- Preview substitutions live, as you type!
-vim.o.inccommand = 'split'
--- Show which line your cursor is on
-vim.o.cursorline = true
--- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 14
+  vim.o.signcolumn = 'yes'
+  vim.o.updatetime = 250
+  vim.o.timeoutlen = 300
 
--- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
--- instead raise a dialog asking if you wish to save the current file(s)
--- See `:help 'confirm'`
-vim.o.confirm = true
+  vim.o.splitright = true
+  vim.o.splitbelow = true
 
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.o.expandtab = true
-vim.opt.winborder = 'rounded'
+  vim.o.list = true
+  vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
--- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
+  vim.o.inccommand = 'split'
+  vim.o.cursorline = true
+  vim.o.scrolloff = 14
 
-require 'keymaps'
+  vim.o.confirm = true
 
--- Highlight when yanking (copying) text
---  Try it with `yap` in normal mode
---  See `:help vim.hl.on_yank()`
-vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-  callback = function()
-    vim.hl.on_yank()
-  end,
-})
+  vim.o.tabstop = 4
+  vim.o.shiftwidth = 4
+  vim.o.expandtab = true
+  vim.opt.winborder = 'rounded'
 
-require 'config.lazy'
+  require 'keymaps'
 
-require('lazy').setup({
-  rocks = {
-    enabled = false,
-  },
-
-  {
-    'catppuccin/nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      vim.cmd.colorscheme 'catppuccin-mocha'
+  vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking (copying) text',
+    group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+    callback = function()
+      vim.hl.on_yank()
     end,
-  },
+  })
 
-  { import = 'plugins.ui' },
-  { import = 'plugins.lsp' },
-  { import = 'plugins.coding' },
-  { import = 'plugins.syntax' },
-  { import = 'plugins.git' },
-  { import = 'plugins.utils' },
-}, {
-  ui = {},
-})
+  vim.diagnostic.config {
+    update_in_insert = false,
+    severity_sort = true,
+    float = { border = 'rounded', source = 'if_many' },
+    underline = { severity = { min = vim.diagnostic.severity.WARN } },
+    virtual_text = true,
+    jump = {
+      on_jump = function(_, bufnr)
+        vim.diagnostic.open_float {
+          bufnr = bufnr,
+          scope = 'cursor',
+          focus = false,
+        }
+      end,
+    },
+  }
+
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+  vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+  vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+  vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+  vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+  vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+end
+
+-- ============================================================
+-- SECTION 2: PLUGIN LOADING
+-- Load plugins from pack directory
+-- ============================================================
+do
+  local pack_path = vim.fn.stdpath('data') .. '/pack/plugins/start'
+  local lazy_path = vim.fn.stdpath('data') .. '/lazy'
+
+  if vim.fn.isdirectory(lazy_path) == 1 then
+    local handle = vim.loop.fs_scandir(lazy_path)
+    if handle then
+      while true do
+        local name, type = vim.loop.fs_scandir_next(handle)
+        if not name then break end
+        if type == 'directory' then
+          local plugin_dir = pack_path .. '/' .. name
+          if vim.fn.isdirectory(plugin_dir) == 0 then
+            vim.fn.system({ 'ln', '-sf', lazy_path .. '/' .. name, plugin_dir })
+          end
+        end
+      end
+    end
+  end
+
+  require 'plugins'
+
+  vim.opt.rtp:prepend(pack_path .. '/nvim')
+  vim.cmd.colorscheme 'catppuccin-mocha'
+end
+
+-- ============================================================
+-- SECTION 3: UI / CORE UX
+-- ============================================================
+require 'plugins.ui'
+
+-- ============================================================
+-- SECTION 4: LSP / COMPLETION / SNIPPETS
+-- ============================================================
+require 'plugins.lsp'
+
+-- ============================================================
+-- SECTION 5: CODING TOOLS
+-- ============================================================
+require 'plugins.coding'
+
+-- ============================================================
+-- SECTION 6: SYNTAX / TREESITTER
+-- ============================================================
+require 'plugins.syntax'
+
+-- ============================================================
+-- SECTION 7: GIT INTEGRATION
+-- ============================================================
+require 'plugins.git'
+
+-- ============================================================
+-- SECTION 8: UTILITIES
+-- ============================================================
+require 'plugins.utils'

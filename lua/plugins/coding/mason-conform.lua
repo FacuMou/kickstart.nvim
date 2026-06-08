@@ -1,3 +1,1 @@
-return {
-  'LittleEndianRoot/mason-conform',
-}
+-- mason-conform is installed but no configuration needed
