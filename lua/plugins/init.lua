@@ -1,4 +1,4 @@
-local pack_path = vim.fn.stdpath('data') .. '/pack/plugins/start'
+local pack_path = vim.fn.stdpath 'data' .. '/pack/plugins/start'
 
 local plugins = {
   'nvim-treesitter',
@@ -24,6 +24,7 @@ local plugins = {
   'mason-tool-installer.nvim',
   'fidget.nvim',
   'blink.cmp',
+  'blink.lib',
   'LuaSnip',
   'lazydev.nvim',
   'nvim-lspconfig',

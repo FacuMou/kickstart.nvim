@@ -1,4 +1,4 @@
-require('blink.cmp').setup({
+require('blink.cmp').setup {
   keymap = {
     preset = 'default',
   },
@@ -6,15 +6,13 @@ require('blink.cmp').setup({
     nerd_font_variant = 'mono',
   },
   completion = {
-    documentation = { auto_show = false, auto_show_delay_ms = 500 },
+    keyword = { range = 'full' },
+    documentation = { auto_show = true },
   },
   sources = {
-    default = { 'lsp', 'path', 'snippets', 'lazydev' },
-    providers = {
-      lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
-    },
+    default = { 'lsp', 'path', 'snippets', 'buffer' },
   },
   snippets = { preset = 'luasnip' },
-  fuzzy = { implementation = 'lua' },
+  fuzzy = { implementation = 'prefer_rust_with_warning' },
   signature = { enabled = true },
-})
+}

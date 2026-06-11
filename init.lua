@@ -87,19 +87,21 @@ end
 -- Load plugins from pack directory
 -- ============================================================
 do
-  local pack_path = vim.fn.stdpath('data') .. '/pack/plugins/start'
-  local lazy_path = vim.fn.stdpath('data') .. '/lazy'
+  local pack_path = vim.fn.stdpath 'data' .. '/pack/plugins/start'
+  local lazy_path = vim.fn.stdpath 'data' .. '/lazy'
 
   if vim.fn.isdirectory(lazy_path) == 1 then
     local handle = vim.loop.fs_scandir(lazy_path)
     if handle then
       while true do
         local name, type = vim.loop.fs_scandir_next(handle)
-        if not name then break end
+        if not name then
+          break
+        end
         if type == 'directory' then
           local plugin_dir = pack_path .. '/' .. name
           if vim.fn.isdirectory(plugin_dir) == 0 then
-            vim.fn.system({ 'ln', '-sf', lazy_path .. '/' .. name, plugin_dir })
+            vim.fn.system { 'ln', '-sf', lazy_path .. '/' .. name, plugin_dir }
           end
         end
       end
@@ -112,32 +114,14 @@ do
   vim.cmd.colorscheme 'catppuccin-mocha'
 end
 
--- ============================================================
--- SECTION 3: UI / CORE UX
--- ============================================================
 require 'plugins.ui'
 
--- ============================================================
--- SECTION 4: LSP / COMPLETION / SNIPPETS
--- ============================================================
 require 'plugins.lsp'
 
--- ============================================================
--- SECTION 5: CODING TOOLS
--- ============================================================
 require 'plugins.coding'
 
--- ============================================================
--- SECTION 6: SYNTAX / TREESITTER
--- ============================================================
 require 'plugins.syntax'
 
--- ============================================================
--- SECTION 7: GIT INTEGRATION
--- ============================================================
 require 'plugins.git'
 
--- ============================================================
--- SECTION 8: UTILITIES
--- ============================================================
 require 'plugins.utils'
