@@ -90,6 +90,8 @@ do
   local pack_path = vim.fn.stdpath 'data' .. '/pack/plugins/start'
   local lazy_path = vim.fn.stdpath 'data' .. '/lazy'
 
+  vim.pack.add { { src = 'https://github.com/catppuccin/nvim', name = 'catppuccin' } }
+
   if vim.fn.isdirectory(lazy_path) == 1 then
     local handle = vim.loop.fs_scandir(lazy_path)
     if handle then
@@ -108,6 +110,7 @@ do
     end
   end
 
+  vim.opt.rtp:prepend(vim.fn.stdpath('data') .. '/site/pack/core/opt')
   require 'plugins'
 
   vim.opt.rtp:prepend(pack_path .. '/nvim')

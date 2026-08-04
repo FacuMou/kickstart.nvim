@@ -37,6 +37,7 @@ local plugins = {
   'nvim-tmux-navigation',
   'mason-conform',
   'opencode.nvim',
+  'catppuccin',
 }
 
 for _, plugin in ipairs(plugins) do
